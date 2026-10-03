@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Manx Home Budget</title>
+<meta name="description" content="Work out what you can afford to buy in the Isle of Man, using Manx tax and National Insurance rates.">
+<meta name="theme-color" content="#C8102E">
+<script>try{var t=localStorage.getItem('manxTheme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Manx Budget">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{
+  --red:#C8102E; --red-dark:#9B0B22; --cream:#FAF6EE; --ink:#1B2A38; --muted:#5E6B78;
+  --sea:#1F5F7A; --gold:#C9A227; --line:#E6DFD0; --card:#FFFFFF;
+  --good:#2E7D4F; --warn:#C98A00; --bad:#C8102E;
+  --r:18px; --accent:#C8102E; --field:#FFFDF9; --on-ink:#fff;
+  --note-bg:#FFF6D9; --note-line:#F1DFA0; --note-ink:#5A4600;
+  color-scheme:light;
+}
+:root[data-theme=dark]{
+  --cream:#11151A; --ink:#EEF1F4; --muted:#9AA7B4; --line:#2B343D; --card:#1A2027;
+  --field:#11161B; --on-ink:#11151A; --accent:#FF6B80;
+  --note-bg:#352D12; --note-line:#5C4F1D; --note-ink:#F3E2A1;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme=light]){
+    --cream:#11151A; --ink:#EEF1F4; --muted:#9AA7B4; --line:#2B343D; --card:#1A2027;
+    --field:#11161B; --on-ink:#11151A; --accent:#FF6B80;
+    --note-bg:#352D12; --note-line:#5C4F1D; --note-ink:#F3E2A1;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding-bottom:env(safe-area-inset-bottom)}
+header{background:linear-gradient(160deg,var(--red) 0%,var(--red-dark) 100%);color:#fff;padding:calc(env(safe-area-inset-top) + 22px) 20px 54px;position:relative;overflow:hidden}
+header .tri{position:absolute;right:-30px;top:-10px;width:190px;height:190px;opacity:.16}
+header .brand{display:flex;align-items:center;gap:12px;position:relative}
+header .badge{width:46px;height:46px;border-radius:14px;background:#fff;display:grid;place-items:center;flex:none}
+header h1{margin:0;font-size:22px;letter-spacing:.2px;line-height:1.1}
+header .sub{margin:3px 0 0;font-size:13px;opacity:.9}
+header .welcome{position:relative;margin:18px 0 0;font-size:15px;max-width:34em}
+header .welcome b{color:#FFE9A8}
+main{max-width:640px;margin:-34px auto 0;padding:0 14px 30px;position:relative}
+.card{background:var(--card);border-radius:var(--r);padding:18px;margin:0 0 14px;box-shadow:0 1px 2px rgba(27,42,56,.06),0 8px 24px rgba(27,42,56,.06);border:1px solid var(--line)}
+.card h2{margin:0 0 12px;font-size:13px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:8px}
+.card h2 .n{width:22px;height:22px;border-radius:50%;background:var(--red);color:#fff;font-size:12px;display:grid;place-items:center;letter-spacing:0}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 5px}
+label small{font-weight:400;color:var(--muted)}
+.field{position:relative}
+.field .pre,.field .suf{position:absolute;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:600;pointer-events:none}
+.field .pre{left:14px}.field .suf{right:14px}
+input[type=number],select{width:100%;font:inherit;font-size:18px;font-weight:600;color:var(--ink);padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--field);appearance:none;-webkit-appearance:none;min-height:50px}
+.field input.hasPre{padding-left:30px}
+input:focus,select:focus{outline:none;border-color:var(--sea);box-shadow:0 0 0 3px rgba(31,95,122,.15)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%235E6B78' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--field);cursor:pointer;font-weight:600}
+.switch input{width:22px;height:22px;accent-color:var(--red)}
+.chips{display:flex;gap:8px}
+.chip{flex:1;font:inherit;font-weight:700;padding:12px 6px;border-radius:12px;border:1.5px solid var(--line);background:var(--field);color:var(--ink);min-height:48px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--on-ink);border-color:var(--ink)}
+.hint{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+.hidden{display:none!important}
+
+/* results */
+.hero{background:linear-gradient(160deg,#17384A,var(--sea));color:#fff;border:none}
+.hero h2{color:#BFE3F2}
+.hero h2 .n{background:#BFE3F2;color:#17384A}
+.big{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.big .box{background:rgba(255,255,255,.1);border-radius:14px;padding:14px}
+.big .lab{font-size:12px;opacity:.85;text-transform:uppercase;letter-spacing:.06em}
+.big .val{font-size:27px;font-weight:800;margin:3px 0 2px;letter-spacing:-.5px}
+.big .sm{font-size:12.5px;opacity:.85}
+.stat{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
+.stat:last-child{border-bottom:0}
+.stat span:first-child{color:var(--muted)}
+.stat b{text-align:right}
+.hero .stat{border-color:rgba(255,255,255,.18)}
+.hero .stat span:first-child{color:#CFE6EF}
+.meter{height:12px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden;margin:10px 0 6px}
+.meter i{display:block;height:100%;width:0;border-radius:99px;background:var(--good);transition:width .35s,background .35s}
+.verdict{font-weight:700;font-size:15px}
+.note{background:var(--note-bg);border:1px solid var(--note-line);color:var(--note-ink);border-radius:12px;padding:10px 12px;font-size:13.5px;margin-top:12px}
+
+.go{display:grid;gap:10px;margin-top:6px}
+.go a{display:flex;align-items:center;justify-content:space-between;gap:10px;text-decoration:none;color:var(--ink);padding:14px 16px;border-radius:14px;border:1.5px solid var(--line);background:var(--field);font-weight:700;min-height:54px}
+.go a.primary{background:var(--red);border-color:var(--red);color:#fff}
+.go a small{display:block;font-weight:500;opacity:.8;font-size:12.5px}
+.go a .arr{font-size:20px}
+.seg{display:flex;gap:8px;margin-bottom:12px}
+.seg .chip{font-size:14px}
+
+.facts{margin:0;padding-left:18px;color:var(--ink);font-size:14.5px}
+.facts li{margin:6px 0}
+.install{background:var(--ink);color:var(--on-ink);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:14px;display:flex;align-items:center;gap:12px}
+.install button{margin-left:auto;font:inherit;font-weight:700;border:0;border-radius:10px;padding:9px 14px;background:var(--on-ink);color:var(--ink);cursor:pointer}
+footer{text-align:center;color:var(--muted);font-size:12.5px;padding:6px 20px 30px;max-width:640px;margin:0 auto}
+footer b{color:var(--accent)}
+.knot{height:6px;background:repeating-linear-gradient(90deg,var(--red) 0 14px,var(--gold) 14px 20px,var(--sea) 20px 34px,var(--cream) 34px 40px)}
+.theme{position:absolute;z-index:2;top:calc(env(safe-area-inset-top) + 16px);right:16px;width:42px;height:42px;border-radius:50%;border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.16);color:#fff;font-size:20px;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0}
+.theme:active{background:rgba(255,255,255,.3)}
+header .brand{padding-right:50px}
+body,.card,input,select,.chip,.switch,.go a{transition:background-color .25s,color .25s,border-color .25s}
+</style>
+</head>
+<body>
+<div class="knot" aria-hidden="true"></div>
+<header>
+  <button id="theme" class="theme" type="button" aria-label="Switch to dark mode"></button>
+  <svg class="tri" viewBox="-50 -50 100 100" aria-hidden="true"><g id="legs" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <g><path d="M0 0 C 10 -8 18 -18 14 -30 L 28 -36"/></g>
+    <g transform="rotate(120)"><path d="M0 0 C 10 -8 18 -18 14 -30 L 28 -36"/></g>
+    <g transform="rotate(240)"><path d="M0 0 C 10 -8 18 -18 14 -30 L 28 -36"/></g></g></svg>
+  <div class="brand">
+    <div class="badge"><svg viewBox="-50 -50 100 100" width="34" height="34" aria-hidden="true"><g fill="none" stroke="#C8102E" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><path d="M0 0 C 10 -8 18 -18 14 -30 L 28 -36"/><path transform="rotate(120)" d="M0 0 C 10 -8 18 -18 14 -30 L 28 -36"/><path transform="rotate(240)" d="M0 0 C 10 -8 18 -18 14 -30 L 28 -36"/></g></svg></div>
+    <div><h1>Manx Home Budget</h1><p class="sub">Isle of Man homes only &middot; 2026/27 Manx rates</p></div>
+  </div>
+  <p class="welcome"><b>Failt erriu.</b> Find out what you can really afford to buy on Ellan Vannin, using Manx income tax and National Insurance, not UK figures.</p>
+</header>
+
+<main>
+  <div id="install" class="install hidden"><span id="installText">Add this to your Home Screen for one-tap access.</span><button id="installBtn" class="hidden">Install</button></div>
+
+  <section class="card">
+    <h2><span class="n">1</span>About you</h2>
+    <label for="sal">Your salary <small>(gross, per year)</small></label>
+    <div class="field"><span class="pre">£</span><input id="sal" class="hasPre" type="number" inputmode="decimal" min="0" step="500" placeholder="35000"></div>
+
+    <label class="switch"><span>Buying with a partner?</span><input type="checkbox" id="hasP"></label>
+    <div id="pWrap" class="hidden">
+      <label for="psal">Partner's salary <small>(gross, per year)</small></label>
+      <div class="field"><span class="pre">£</span><input id="psal" class="hasPre" type="number" inputmode="decimal" min="0" step="500" placeholder="28000"></div>
+    </div>
+
+    <label for="dep">Deposit saved</label>
+    <div class="field"><span class="pre">£</span><input id="dep" class="hasPre" type="number" inputmode="decimal" min="0" step="1000" placeholder="25000"></div>
+
+    <label for="debt">Monthly debts <small>(loans, cards, car finance)</small></label>
+    <div class="field"><span class="pre">£</span><input id="debt" class="hasPre" type="number" inputmode="decimal" min="0" step="10" placeholder="0"></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">2</span>The mortgage</h2>
+    <div class="row">
+      <div><label for="term">Term</label>
+        <select id="term"><option>15</option><option>20</option><option selected>25</option><option>30</option><option>35</option></select></div>
+      <div><label for="rate">Interest rate</label>
+        <div class="field"><input id="rate" type="number" inputmode="decimal" min="0" max="15" step="0.1" value="4.5"><span class="suf">%</span></div></div>
+    </div>
+    <label>Lender income multiple <small>(how many times your income)</small></label>
+    <div class="chips" id="mult">
+      <button class="chip" data-v="4" aria-pressed="false">4&times;</button>
+      <button class="chip" data-v="4.5" aria-pressed="true">4.5&times;</button>
+      <button class="chip" data-v="5" aria-pressed="false">5&times;</button>
+    </div>
+    <p class="hint">Most lenders sit around 4 to 4.5&times;. Check the current rate with your bank or broker.</p>
+  </section>
+
+  <section class="card hero" aria-live="polite">
+    <h2><span class="n">3</span>What you can afford</h2>
+    <div class="big">
+      <div class="box"><div class="lab">Comfortable</div><div class="val" id="comf">£0</div><div class="sm" id="comfPay">–</div></div>
+      <div class="box"><div class="lab">Lender maximum</div><div class="val" id="max">£0</div><div class="sm" id="maxPay">–</div></div>
+    </div>
+    <div class="meter"><i id="bar"></i></div>
+    <div class="verdict" id="verdict">Enter your salary to begin.</div>
+    <div id="depNote" class="note hidden"></div>
+    <div style="margin-top:12px">
+      <div class="stat"><span>Take-home pay (a month)</span><b id="take">–</b></div>
+      <div class="stat"><span>Income tax + NI (a year)</span><b id="tax">–</b></div>
+      <div class="stat"><span>Mortgage at max</span><b id="loanMax">–</b></div>
+      <div class="stat"><span>If rates rose 2 points</span><b id="stress">–</b></div>
+    </div>
+    <p class="hint" style="color:#CFE6EF">"Comfortable" keeps the mortgage to about 30% of take-home pay.</p>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">4</span>Now go house hunting</h2>
+    <div class="seg" id="which">
+      <button class="chip" data-w="comf" aria-pressed="true">Comfortable</button>
+      <button class="chip" data-w="max" aria-pressed="false">Maximum</button>
+    </div>
+    <div class="go">
+      <a class="primary" id="lIsland" href="https://islandhomes.im/" target="_blank" rel="noopener"><span>Island Homes<small>Every Manx agent in one search</small></span><span class="arr">&rarr;</span></a>
+      <a id="lManx" href="https://manx.life/real-estate" target="_blank" rel="noopener"><span>Manx Life property<small>Updated daily from agent sites</small></span><span class="arr">&rarr;</span></a>
+      <a id="lZoopla" href="https://www.zoopla.co.uk/for-sale/property/isle-of-man/" target="_blank" rel="noopener"><span>Zoopla Isle of Man<small id="zs">Filtered to your budget</small></span><span class="arr">&rarr;</span></a>
+      <a id="lOTM" href="https://www.onthemarket.com/for-sale/property/isle-of-man/" target="_blank" rel="noopener"><span>OnTheMarket Isle of Man<small>Filtered to your budget</small></span><span class="arr">&rarr;</span></a>
+      <a href="https://www.chrystals.co.im/" target="_blank" rel="noopener"><span>Chrystals<small>Local agent, often has listings first</small></span><span class="arr">&rarr;</span></a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Buying on the Island</h2>
+    <ul class="facts">
+      <li><b>No stamp duty</b> is charged on Isle of Man property purchases, unlike the UK. Confirm with your advocate.</li>
+      <li>Budget for <b>advocate's fees</b>, a survey, and Land Registry fees on top of the price.</li>
+      <li>Your yearly <b>rates bill</b> from the local authority is extra to the mortgage.</li>
+      <li>Manx NI and tax differ from the UK, so a UK mortgage calculator will give the wrong take-home pay.</li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <div class="knot" style="margin:0 auto 14px;max-width:120px;border-radius:9px" aria-hidden="true"></div>
+  Estimates only, not financial advice. Uses 2026/27 Isle of Man rates: 10% on the first £6,500 above a £17,000 allowance, then 21%; employee NI 11% (1% above the upper limit). Assumes you are employed and a Manx resident. NI lower threshold is approximate.<br><br>
+  Made on <b>Ellan Vannin</b> &middot; <i>Gura mie eu</i>
+</footer>
+
+<script>
+(function(){
+  // ---- 2026/27 Isle of Man rates ----
+  var PA=17000, BAND=6500, LOW=0.10, HIGH=0.21;
+  var NI_RATE=0.11, NI_ABOVE=0.01, NI_LEL_WK=153, NI_UEL_WK=1082; // LEL approximate
+  var COMFORT_SHARE=0.30, MIN_DEPOSIT=0.10;
+
+  function tax(g){
+    var pa=PA; if(g>100000) pa=Math.max(0,PA-(g-100000)/2);
+    var t=Math.max(0,g-pa);
+    return Math.min(t,BAND)*LOW+Math.max(0,t-BAND)*HIGH;
+  }
+  function ni(g){
+    var lel=NI_LEL_WK*52, uel=NI_UEL_WK*52;
+    if(g<=lel) return 0;
+    return (Math.min(g,uel)-lel)*NI_RATE + Math.max(0,g-uel)*NI_ABOVE;
+  }
+  function pmt(loan,rate,years){
+    var n=years*12, r=rate/1200;
+    if(loan<=0) return 0;
+    return r===0 ? loan/n : loan*r/(1-Math.pow(1+r,-n));
+  }
+  function loanFromPmt(p,rate,years){
+    var n=years*12, r=rate/1200;
+    return r===0 ? p*n : p*(1-Math.pow(1+r,-n))/r;
+  }
+
+  var $=function(id){return document.getElementById(id)};
+  var gbp=new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:0});
+  var money=function(x){return gbp.format(Math.round(x))};
+  var state={mult:4.5,which:'comf'};
+  var KEY='manxHomeBudget.v1';
+
+  function num(id){var v=parseFloat($(id).value);return isFinite(v)&&v>0?v:0}
+
+  function save(){try{localStorage.setItem(KEY,JSON.stringify({sal:$('sal').value,psal:$('psal').value,hasP:$('hasP').checked,dep:$('dep').value,debt:$('debt').value,term:$('term').value,rate:$('rate').value,mult:state.mult,which:state.which}))}catch(e){}}
+  function load(){try{var s=JSON.parse(localStorage.getItem(KEY)||'null');if(!s)return;
+    $('sal').value=s.sal||'';$('psal').value=s.psal||'';$('hasP').checked=!!s.hasP;$('dep').value=s.dep||'';$('debt').value=s.debt||'';
+    if(s.term)$('term').value=s.term; if(s.rate)$('rate').value=s.rate; if(s.mult)state.mult=+s.mult; if(s.which)state.which=s.which;}catch(e){}}
+
+  function setPressed(sel,attr,val){
+    document.querySelectorAll(sel).forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute(attr)==String(val)))});
+  }
+
+  function roundDown(x){return Math.max(0,Math.floor(x/1000)*1000)}
+
+  function calc(){
+    var hasP=$('hasP').checked;
+    $('pWrap').classList.toggle('hidden',!hasP);
+    var s1=num('sal'), s2=hasP?num('psal'):0, dep=num('dep'), debt=num('debt');
+    var term=+$('term').value, rate=parseFloat($('rate').value); if(!isFinite(rate)||rate<0) rate=0;
+    var gross=s1+s2;
+    var taxNI=tax(s1)+ni(s1)+tax(s2)+ni(s2);
+    var takeYr=gross-taxNI, takeMo=takeYr/12;
+
+    if(gross<=0){
+      ['comf','max'].forEach(function(k){$(k).textContent='£0'});
+      $('comfPay').textContent=$('maxPay').textContent='–';
+      $('take').textContent=$('tax').textContent=$('loanMax').textContent=$('stress').textContent='–';
+      $('bar').style.width='0';$('verdict').textContent='Enter your salary to begin.';
+      $('depNote').classList.add('hidden');links(0);save();return;
+    }
+
+    // Lender maximum: multiple of income after commitments, capped by 90% LTV
+    var effIncome=Math.max(0,gross-debt*12);
+    var loanInc=effIncome*state.mult;
+    var ltvCap=dep*(1-MIN_DEPOSIT)/MIN_DEPOSIT;
+    var loanMax=Math.min(loanInc,ltvCap);
+
+    // Comfortable: repayment ~30% of take-home, after debts
+    var payComf=Math.max(0,takeMo*COMFORT_SHARE-debt);
+    var loanComf=Math.min(loanFromPmt(payComf,rate,term),loanMax);
+
+    var priceMax=roundDown(loanMax+dep), priceComf=roundDown(loanComf+dep);
+    var pMax=pmt(loanMax,rate,term), pComf=pmt(loanComf,rate,term);
+
+    $('comf').textContent=money(priceComf);
+    $('max').textContent=money(priceMax);
+    $('comfPay').textContent=money(pComf)+' a month';
+    $('maxPay').textContent=money(pMax)+' a month';
+    $('take').textContent=money(takeMo);
+    $('tax').textContent=money(taxNI);
+    $('loanMax').textContent=money(loanMax);
+    $('stress').textContent=money(pmt(loanMax,rate+2,term))+' a month';
+
+    var share=takeMo>0?(pMax+debt)/takeMo:1;
+    var bar=$('bar');bar.style.width=Math.min(100,share*100/0.6*1)+'%';
+    var msg,col;
+    if(share<=0.35){msg='Maximum borrowing takes '+Math.round(share*100)+'% of take-home. Comfortable.';col='#6FD39A'}
+    else if(share<=0.45){msg='Maximum borrowing takes '+Math.round(share*100)+'% of take-home. A stretch.';col='#F2C14E'}
+    else{msg='Maximum borrowing takes '+Math.round(share*100)+'% of take-home. Tight, so aim lower.';col='#FF7A8A'}
+    bar.style.background=col;$('verdict').textContent=msg;
+
+    var dn=$('depNote');
+    if(ltvCap<loanInc){
+      dn.textContent='Your deposit is the limit here. Lenders usually want at least 10% down, so a bigger deposit would raise your budget.';
+      dn.classList.remove('hidden');
+    } else dn.classList.add('hidden');
+
+    links(state.which==='max'?priceMax:priceComf);
+    save();
+  }
+
+  function links(price){
+    var p=Math.round(price/5000)*5000; if(price>0&&p===0)p=5000;
+    var z='https://www.zoopla.co.uk/for-sale/property/isle-of-man/';
+    var o='https://www.onthemarket.com/for-sale/property/isle-of-man/';
+    $('lZoopla').href=p>0?z+'?price_max='+p:z;
+    $('lOTM').href=p>0?o+'?max-price='+p:o;
+  }
+
+  document.querySelectorAll('input,select').forEach(function(el){el.addEventListener('input',calc)});
+  $('mult').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;state.mult=+b.dataset.v;setPressed('#mult .chip','data-v',state.mult);calc()});
+  $('which').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;state.which=b.dataset.w;setPressed('#which .chip','data-w',state.which);calc()});
+
+  load();
+  setPressed('#mult .chip','data-v',state.mult);
+  setPressed('#which .chip','data-w',state.which);
+  calc();
+
+  // ---- Light / dark mode ----
+  var root=document.documentElement, mq=window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark(){var t=root.getAttribute('data-theme');return t?t==='dark':mq.matches}
+  function paintTheme(){
+    var d=isDark(), b=$('theme');
+    b.textContent=d?'☀️':'🌙';
+    b.setAttribute('aria-label',d?'Switch to light mode':'Switch to dark mode');
+  }
+  $('theme').addEventListener('click',function(){
+    var next=isDark()?'light':'dark';
+    root.setAttribute('data-theme',next);
+    try{localStorage.setItem('manxTheme',next)}catch(e){}
+    paintTheme();
+  });
+  if(mq.addEventListener) mq.addEventListener('change',paintTheme);
+  paintTheme();
+
+  // ---- Home Screen install hint ----
+  var standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;
+  var deferred=null;
+  window.addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault();deferred=e;
+    $('install').classList.remove('hidden');$('installBtn').classList.remove('hidden');
+  });
+  $('installBtn').addEventListener('click',function(){
+    if(!deferred)return;deferred.prompt();deferred.userChoice.finally(function(){deferred=null;$('install').classList.add('hidden')});
+  });
+  if(!standalone && /iphone|ipad|ipod/i.test(navigator.userAgent)){
+    $('installText').textContent='To install: tap the Share button, then "Add to Home Screen".';
+    $('install').classList.remove('hidden');
+  }
+  if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  }
+})();
+</script>
+</body>
+</html>
